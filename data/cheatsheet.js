@@ -1,0 +1,20 @@
+window.CHEATSHEET = [
+  {group:"Datenbank", cmd:"CREATE DATABASE", desc:"Datenbank anlegen", example:"CREATE DATABASE IF NOT EXISTS shop CHARACTER SET utf8mb4;"},
+  {group:"Datenbank", cmd:"SHOW DATABASES / USE", desc:"Datenbanken anzeigen, auswählen", example:"SHOW DATABASES;\nUSE shop;"},
+  {group:"Datenbank", cmd:"DROP DATABASE", desc:"Datenbank löschen (endgültig)", example:"DROP DATABASE IF EXISTS shop;"},
+  {group:"Tabelle", cmd:"CREATE TABLE", desc:"Tabelle anlegen", example:"CREATE TABLE t (id INT PRIMARY KEY AUTO_INCREMENT, name VARCHAR(50) NOT NULL);"},
+  {group:"Tabelle", cmd:"SHOW TABLES / DESCRIBE", desc:"Tabellen und Struktur anzeigen", example:"SHOW TABLES;\nDESCRIBE t;"},
+  {group:"Tabelle", cmd:"ALTER TABLE", desc:"Spalten hinzufügen, ändern, entfernen", example:"ALTER TABLE t ADD COLUMN preis DECIMAL(8,2);\nALTER TABLE t MODIFY name VARCHAR(100);\nALTER TABLE t DROP COLUMN preis;"},
+  {group:"Tabelle", cmd:"DROP TABLE", desc:"Tabelle löschen", example:"DROP TABLE IF EXISTS t;"},
+  {group:"Constraints", cmd:"NOT NULL / UNIQUE / DEFAULT / CHECK", desc:"Regeln für Spalten", example:"preis DECIMAL(8,2) NOT NULL DEFAULT 0 CHECK (preis >= 0)"},
+  {group:"Constraints", cmd:"FOREIGN KEY", desc:"Verweis auf andere Tabelle", example:"FOREIGN KEY (kunden_id) REFERENCES kunden(kunden_id)"},
+  {group:"Daten", cmd:"INSERT", desc:"Zeilen einfügen", example:"INSERT INTO t (name) VALUES ('A'), ('B');"},
+  {group:"Daten", cmd:"UPDATE", desc:"Zeilen ändern (immer mit WHERE!)", example:"UPDATE t SET name = 'C' WHERE id = 1;"},
+  {group:"Daten", cmd:"DELETE", desc:"Zeilen löschen (immer mit WHERE!)", example:"DELETE FROM t WHERE id = 1;"},
+  {group:"Daten", cmd:"ON DUPLICATE KEY UPDATE", desc:"Einfügen oder aktualisieren", example:"INSERT INTO t (id, name) VALUES (1,'X')\nON DUPLICATE KEY UPDATE name = VALUES(name);"},
+  {group:"Abfrage", cmd:"SELECT", desc:"Daten abfragen", example:"SELECT name FROM t WHERE id > 1 ORDER BY name LIMIT 10;"},
+  {group:"Abfrage", cmd:"WHERE / LIKE / IN / BETWEEN / IS NULL", desc:"Zeilen filtern", example:"WHERE name LIKE 'A%' AND id IN (1,2) AND preis BETWEEN 1 AND 5 AND x IS NULL"},
+  {group:"Abfrage", cmd:"GROUP BY / HAVING", desc:"Gruppieren, Gruppen filtern", example:"SELECT kategorie, COUNT(*) FROM produkte GROUP BY kategorie HAVING COUNT(*) > 1;"},
+  {group:"Abfrage", cmd:"ORDER BY", desc:"Sortieren (ASC/DESC)", example:"SELECT * FROM produkte ORDER BY preis DESC, name;"},
+  {group:"Abfrage", cmd:"COUNT / SUM / AVG / MIN / MAX", desc:"Aggregatfunktionen", example:"SELECT COUNT(*), AVG(preis), MAX(preis) FROM produkte;"}
+];
