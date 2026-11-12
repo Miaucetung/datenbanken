@@ -22,6 +22,22 @@
   };
   $("#menuBtn").onclick = function () { nav.classList.toggle("open"); };
 
+  // SQL-Skripte zum Herunterladen
+  var SQL_FILES = {
+    "lernshop.sql": "Übungsdatenbank lernshop (legt sie neu an, setzt alles zurück)",
+    "fahrradverleih_daten.sql": "Testdaten für das Abschlussprojekt (Tabellen vorher selbst anlegen)"
+  };
+  var CHAPTER_SQL = {3: ["lernshop.sql"], 6: ["lernshop.sql"], 7: ["lernshop.sql"], 8: ["lernshop.sql"], 9: ["lernshop.sql"], 10: ["lernshop.sql"],
+    11: ["lernshop.sql"], 12: ["lernshop.sql"], 13: ["lernshop.sql"], 14: ["lernshop.sql"], 15: ["lernshop.sql"], 16: ["lernshop.sql"],
+    17: ["fahrradverleih_daten.sql"]};
+  function dlLink(name) {
+    return '<a class="dl" href="sql/' + name + '" download="' + name + '">⬇ ' + name + "</a>";
+  }
+  function dlBox(names) {
+    return '<p class="dls">' + names.map(function (n) { return dlLink(n) + ' <small class="lead">' + esc(SQL_FILES[n]) + "</small>"; }).join("<br>") +
+      '</p><p><small class="lead">Import im Terminal, im Ordner der Datei: <code>mariadb -u root -p &lt; ' + names[0] + "</code></small></p>";
+  }
+
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]; }); }
   function code(src) {
     return '<div class="codewrap"><button class="copy" type="button">Kopieren</button><pre><code>' + esc(src.trim()) + "</code></pre></div>";
@@ -54,7 +70,8 @@
       '<p class="lead">Lektionen, Befehle und Übungen zum Selbermachen. Du übst in deinem lokalen MariaDB, diese Seite liefert Erklärung, Aufgaben und Lösungen.</p>' +
       '<div class="card"><b>Start in 2 Schritten</b><ol>' +
       "<li>MariaDB-Client öffnen: <code>mariadb -u root -p</code></li>" +
-      "<li>Ab Kapitel 7 die Übungsdatenbank laden: <code>source sql/lernshop.sql;</code></li></ol>" +
+      "<li>Ab Kapitel 6 die Übungsdatenbank laden: <code>source lernshop.sql;</code> (heruntergeladene Datei im aktuellen Ordner) oder <code>source sql/lernshop.sql;</code> (wenn du das Repo geklont hast)</li></ol>" +
+      "<p><b>SQL-Skripte herunterladen:</b></p>" + dlBox(["lernshop.sql", "fahrradverleih_daten.sql"]) +
       "<p>Gesamtfortschritt: " + td + " von " + tn + " Übungen</p>" +
       '<div class="progress"><i style="width:' + (tn ? td / tn * 100 : 0) + '%"></i></div></div>' +
       '<div class="grid">' + all.map(function (c) {
@@ -80,6 +97,7 @@
     }
     var h = "<h1>" + ch.id + ". " + esc(ch.title) + "</h1><p class='lead'>" + l.intro + "</p>";
     if (l.setup) h += '<div class="tip"><b>Vorbereitung:</b> ' + l.setup + "</div>";
+    if (CHAPTER_SQL[id]) h += '<div class="card"><b>Skript zum Herunterladen</b>' + dlBox(CHAPTER_SQL[id]) + "</div>";
     l.sections.forEach(function (s) {
       h += "<h2>" + esc(s.title) + "</h2>" + (s.text || "");
       (s.code || []).forEach(function (c) { h += code(c); });
