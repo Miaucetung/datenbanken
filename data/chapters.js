@@ -17,5 +17,6 @@ window.CHAPTERS = [
   {id:13, title:"Zugriffsrechte und Benutzer",       status:"ready"  , sections:["Benutzer (MariaDB)","GRANT","REVOKE"]},
   {id:14, title:"Transaktionsverwaltung",            status:"ready"  , sections:["START TRANSACTION","COMMIT","ROLLBACK"]},
   {id:15, title:"Stored Procedures",                 status:"ready"  , sections:["Erstellen","Bearbeiten","Beispielanwendung"]},
-  {id:16, title:"Trigger",                           status:"ready"  , sections:["Erstellen","Bearbeiten und löschen"]}
+  {id:16, title:"Trigger",                           status:"ready"  , sections:["Erstellen","Bearbeiten und löschen"]},
+  {id:17, title:"Abschlussprojekt: Fahrradverleih", status:"ready",   sections:["Entwurf","Tabellen","Abfragen","Sicht und Index","Prozeduren","Trigger","Rechte","Reflexion"]}
 ];
