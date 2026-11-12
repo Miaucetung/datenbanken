@@ -9,7 +9,7 @@ Du übst im lokalen MariaDB, die Seite liefert Lektionen, Aufgaben, Lösungen un
 - Fortschritt (Häkchen bei Aufgaben) wird im Browser gespeichert.
 
 ## Stand
-Fertig: Kapitel 4 bis 7 (Datenbanken, Tabellen, Daten ändern, einfache Abfragen) und Spickzettel.
+Fertig: Kapitel 4 bis 10 (Datenbanken, Tabellen, Daten ändern, Abfragen, Schlüssel und Indizes, Funktionen, Joins und Unterabfragen) und Spickzettel.
 Alle Lösungen sind gegen MariaDB 10.11 getestet. Die übrigen Kapitel sind geplant.
 
 ## Struktur

@@ -16,5 +16,19 @@ window.CHEATSHEET = [
   {group:"Abfrage", cmd:"WHERE / LIKE / IN / BETWEEN / IS NULL", desc:"Zeilen filtern", example:"WHERE name LIKE 'A%' AND id IN (1,2) AND preis BETWEEN 1 AND 5 AND x IS NULL"},
   {group:"Abfrage", cmd:"GROUP BY / HAVING", desc:"Gruppieren, Gruppen filtern", example:"SELECT kategorie, COUNT(*) FROM produkte GROUP BY kategorie HAVING COUNT(*) > 1;"},
   {group:"Abfrage", cmd:"ORDER BY", desc:"Sortieren (ASC/DESC)", example:"SELECT * FROM produkte ORDER BY preis DESC, name;"},
-  {group:"Abfrage", cmd:"COUNT / SUM / AVG / MIN / MAX", desc:"Aggregatfunktionen", example:"SELECT COUNT(*), AVG(preis), MAX(preis) FROM produkte;"}
+  {group:"Abfrage", cmd:"COUNT / SUM / AVG / MIN / MAX", desc:"Aggregatfunktionen", example:"SELECT COUNT(*), AVG(preis), MAX(preis) FROM produkte;"},
+{group:"Schlüssel/Index", cmd:"PRIMARY KEY / UNIQUE", desc:"Schlüssel und Eindeutigkeit nachträglich", example:"ALTER TABLE t ADD PRIMARY KEY (id);\nALTER TABLE kunden ADD CONSTRAINT uq_email UNIQUE (email);"},
+  {group:"Schlüssel/Index", cmd:"ON DELETE CASCADE", desc:"Fremdschlüssel mit Folgeaktion", example:"FOREIGN KEY (bestell_id) REFERENCES bestellungen(bestell_id) ON DELETE CASCADE"},
+  {group:"Schlüssel/Index", cmd:"CREATE INDEX / SHOW INDEX / EXPLAIN", desc:"Index anlegen, anzeigen, Nutzung prüfen", example:"CREATE INDEX idx_stadt ON kunden (stadt);\nSHOW INDEX FROM kunden;\nEXPLAIN SELECT * FROM kunden WHERE stadt = 'Berlin';"},
+  {group:"Funktionen", cmd:"CONCAT / UPPER / SUBSTRING / REPLACE", desc:"Textfunktionen", example:"SELECT CONCAT(vorname, ' ', nachname), UPPER(stadt) FROM kunden;"},
+  {group:"Funktionen", cmd:"ROUND / CEIL / FLOOR / MOD", desc:"Zahlenfunktionen", example:"SELECT ROUND(preis * 1.19, 2) FROM produkte;"},
+  {group:"Funktionen", cmd:"NOW / CURDATE / DATEDIFF / DATE_FORMAT", desc:"Datum und Zeit", example:"SELECT DATE_FORMAT(datum, '%d.%m.%Y'), DATEDIFF(CURDATE(), datum) FROM bestellungen;"},
+  {group:"Funktionen", cmd:"IFNULL / COALESCE", desc:"Ersatzwert für NULL", example:"SELECT COALESCE(stadt, 'unbekannt') FROM kunden;"},
+  {group:"Funktionen", cmd:"CASE", desc:"Bedingte Werte", example:"SELECT CASE WHEN preis < 5 THEN 'günstig' ELSE 'teuer' END FROM produkte;"},
+  {group:"Funktionen", cmd:"GROUP_CONCAT", desc:"Werte einer Gruppe zu Text verbinden (MariaDB)", example:"SELECT kategorie, GROUP_CONCAT(name SEPARATOR ', ') FROM produkte GROUP BY kategorie;"},
+  {group:"Joins", cmd:"INNER JOIN", desc:"Nur Zeilen mit Partner", example:"SELECT * FROM kunden k JOIN bestellungen b ON b.kunden_id = k.kunden_id;"},
+  {group:"Joins", cmd:"LEFT JOIN", desc:"Alle links, auch ohne Partner", example:"SELECT k.vorname, b.bestell_id FROM kunden k LEFT JOIN bestellungen b ON b.kunden_id = k.kunden_id;"},
+  {group:"Joins", cmd:"UNION / UNION ALL", desc:"Ergebnisse untereinander (ohne/mit Duplikate)", example:"SELECT stadt FROM kunden UNION SELECT kategorie FROM produkte;"},
+  {group:"Joins", cmd:"INTERSECT / EXCEPT", desc:"Schnitt- und Differenzmenge (MariaDB ab 10.3)", example:"SELECT kunden_id FROM kunden EXCEPT SELECT kunden_id FROM bestellungen;"},
+  {group:"Joins", cmd:"Unterabfrage (IN / EXISTS)", desc:"Abfrage in der Abfrage", example:"SELECT name FROM produkte WHERE preis > (SELECT AVG(preis) FROM produkte);"}
 ];
