@@ -30,5 +30,16 @@ window.CHEATSHEET = [
   {group:"Joins", cmd:"LEFT JOIN", desc:"Alle links, auch ohne Partner", example:"SELECT k.vorname, b.bestell_id FROM kunden k LEFT JOIN bestellungen b ON b.kunden_id = k.kunden_id;"},
   {group:"Joins", cmd:"UNION / UNION ALL", desc:"Ergebnisse untereinander (ohne/mit Duplikate)", example:"SELECT stadt FROM kunden UNION SELECT kategorie FROM produkte;"},
   {group:"Joins", cmd:"INTERSECT / EXCEPT", desc:"Schnitt- und Differenzmenge (MariaDB ab 10.3)", example:"SELECT kunden_id FROM kunden EXCEPT SELECT kunden_id FROM bestellungen;"},
-  {group:"Joins", cmd:"Unterabfrage (IN / EXISTS)", desc:"Abfrage in der Abfrage", example:"SELECT name FROM produkte WHERE preis > (SELECT AVG(preis) FROM produkte);"}
+  {group:"Joins", cmd:"Unterabfrage (IN / EXISTS)", desc:"Abfrage in der Abfrage", example:"SELECT name FROM produkte WHERE preis > (SELECT AVG(preis) FROM produkte);"},
+{group:"Sichten", cmd:"CREATE VIEW / DROP VIEW", desc:"Gespeicherte Abfrage wie eine Tabelle nutzen", example:"CREATE VIEW v_offen AS SELECT * FROM bestellungen WHERE status = 'offen';\nDROP VIEW IF EXISTS v_offen;"},
+  {group:"Sichten", cmd:"WITH CHECK OPTION", desc:"Änderungen über die Sicht müssen zur Sicht passen", example:"CREATE VIEW v_berlin AS SELECT * FROM kunden WHERE stadt = 'Berlin' WITH CHECK OPTION;"},
+  {group:"Rechte", cmd:"CREATE USER / DROP USER", desc:"Benutzer anlegen und entfernen", example:"CREATE USER 'anna'@'localhost' IDENTIFIED BY 'pw';\nDROP USER 'anna'@'localhost';"},
+  {group:"Rechte", cmd:"GRANT / REVOKE / SHOW GRANTS", desc:"Rechte vergeben, entziehen, anzeigen", example:"GRANT SELECT, INSERT ON lernshop.* TO 'anna'@'localhost';\nREVOKE INSERT ON lernshop.* FROM 'anna'@'localhost';\nSHOW GRANTS FOR 'anna'@'localhost';"},
+  {group:"Transaktion", cmd:"START TRANSACTION / COMMIT / ROLLBACK", desc:"Mehrere Befehle als Einheit", example:"START TRANSACTION;\nUPDATE produkte SET lagerbestand = lagerbestand - 1 WHERE produkt_id = 1;\nCOMMIT;   -- oder ROLLBACK;"},
+  {group:"Transaktion", cmd:"SAVEPOINT", desc:"Zwischenmarke in einer Transaktion", example:"SAVEPOINT sp1;\nROLLBACK TO sp1;"},
+  {group:"Programmierung", cmd:"CREATE PROCEDURE / CALL", desc:"Gespeicherte Prozedur anlegen und aufrufen", example:"DELIMITER //\nCREATE PROCEDURE hallo(IN p_name VARCHAR(30))\nBEGIN\n  SELECT CONCAT('Hallo ', p_name);\nEND //\nDELIMITER ;\nCALL hallo('Welt');"},
+  {group:"Programmierung", cmd:"CREATE FUNCTION", desc:"Eigene Funktion mit Rückgabewert", example:"CREATE FUNCTION brutto(n DECIMAL(8,2)) RETURNS DECIMAL(8,2) DETERMINISTIC RETURN ROUND(n * 1.19, 2);"},
+  {group:"Programmierung", cmd:"DECLARE CURSOR / FETCH", desc:"Zeilen einzeln lesen (nur in Prozeduren)", example:"DECLARE cur CURSOR FOR SELECT preis FROM produkte;\nDECLARE CONTINUE HANDLER FOR NOT FOUND SET fertig = 1;\nOPEN cur; FETCH cur INTO v; CLOSE cur;"},
+  {group:"Programmierung", cmd:"CREATE TRIGGER", desc:"Automatisch bei INSERT/UPDATE/DELETE ausführen", example:"CREATE TRIGGER trg_log AFTER UPDATE ON produkte FOR EACH ROW\n  INSERT INTO log (alt, neu) VALUES (OLD.preis, NEW.preis);"},
+  {group:"Programmierung", cmd:"SIGNAL", desc:"Eigenen Fehler auslösen", example:"SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Nicht erlaubt';"}
 ];

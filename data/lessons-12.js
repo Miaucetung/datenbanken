@@ -1,0 +1,27 @@
+window.LESSONS[12] = {
+  intro: "Ein Cursor liest das Ergebnis einer Abfrage Zeile für Zeile. Das brauchst du, wenn jede Zeile einzeln verarbeitet werden soll. In MariaDB gibt es Cursor nur innerhalb von gespeicherten Programmen (Stored Procedures, Funktionen, Triggern).",
+  setup: "Lade die Übungsdatenbank neu: <code>source sql/lernshop.sql;</code> und <code>USE lernshop;</code>. Cursor stehen in Prozeduren, deshalb brauchst du <code>DELIMITER</code> (siehe Kapitel 15). Kurz: <code>DELIMITER //</code> macht <code>//</code> zum Befehlsende, damit die Semikolons in der Prozedur nicht zu früh abschicken.",
+  sections: [
+    {title: "Wann ein Cursor, wann nicht?",
+     text: "<p>SQL arbeitet normalerweise mengenorientiert: Ein <code>UPDATE</code> ändert viele Zeilen auf einmal. Das ist schneller als ein Cursor. Nutze einen Cursor nur, wenn pro Zeile komplizierte Logik nötig ist, die sich nicht in einer Abfrage ausdrücken lässt.</p>"},
+    {title: "Ablauf: DECLARE, OPEN, FETCH, CLOSE",
+     code: ["DELIMITER //\nCREATE PROCEDURE summe_lager(OUT gesamt DECIMAL(12,2))\nBEGIN\n  DECLARE fertig INT DEFAULT 0;\n  DECLARE v_preis DECIMAL(8,2);\n  DECLARE v_menge INT;\n\n  -- 1. Cursor deklarieren\n  DECLARE cur CURSOR FOR SELECT preis, lagerbestand FROM produkte;\n  -- Handler: wird ausgelöst, wenn keine Zeile mehr kommt\n  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fertig = 1;\n\n  SET gesamt = 0;\n  OPEN cur;                       -- 2. öffnen\n  lesen: LOOP\n    FETCH cur INTO v_preis, v_menge;   -- 3. nächste Zeile holen\n    IF fertig = 1 THEN\n      LEAVE lesen;\n    END IF;\n    SET gesamt = gesamt + v_preis * v_menge;\n  END LOOP;\n  CLOSE cur;                      -- 4. schließen\nEND //\nDELIMITER ;\n\nCALL summe_lager(@x);\nSELECT @x;"],
+     text: "<p>Die Reihenfolge im <code>BEGIN</code>-Block ist fest: erst Variablen (<code>DECLARE</code>), dann Cursor, dann Handler, dann die eigentlichen Anweisungen. Die Variablen im <code>FETCH … INTO</code> müssen zur Spaltenzahl und den Typen passen.</p>",
+     warn: "Ohne den <code>NOT FOUND</code>-Handler bricht <code>FETCH</code> nach der letzten Zeile mit einem Fehler ab. Und vergiss nie <code>CLOSE</code>, auch wenn MariaDB beim Verlassen des Blocks automatisch schließt."}
+  ],
+  exercises: [
+    {id: "k12-1", title: "Lagerwert mit Cursor",
+     task: "<p>Lege die Prozedur aus dem Beispiel an (<code>summe_lager</code>), rufe sie auf und vergleiche das Ergebnis mit <code>SELECT SUM(preis * lagerbestand) FROM produkte;</code>.</p>",
+     solution: "DELIMITER //\nCREATE PROCEDURE summe_lager(OUT gesamt DECIMAL(12,2))\nBEGIN\n  DECLARE fertig INT DEFAULT 0;\n  DECLARE v_preis DECIMAL(8,2);\n  DECLARE v_menge INT;\n  DECLARE cur CURSOR FOR SELECT preis, lagerbestand FROM produkte;\n  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fertig = 1;\n  SET gesamt = 0;\n  OPEN cur;\n  lesen: LOOP\n    FETCH cur INTO v_preis, v_menge;\n    IF fertig = 1 THEN LEAVE lesen; END IF;\n    SET gesamt = gesamt + v_preis * v_menge;\n  END LOOP;\n  CLOSE cur;\nEND //\nDELIMITER ;\n\nCALL summe_lager(@x);\nSELECT @x AS mit_cursor, (SELECT SUM(preis * lagerbestand) FROM produkte) AS mit_sum;",
+     note: "Beide Werte stimmen überein. Die <code>SUM</code>-Variante ist kürzer und schneller. Das ist die Regel: erst eine Mengenabfrage versuchen."},
+    {id: "k12-2", title: "Namensliste zusammenbauen",
+     task: "<p>Schreibe eine Prozedur <code>kunden_liste(OUT liste TEXT)</code>, die mit einem Cursor über <code>kunden</code> läuft und alle Nachnamen, getrennt durch Komma, in <code>liste</code> sammelt. Rufe sie auf.</p>",
+     hints: ["Starte mit <code>SET liste = '';</code> und hänge pro Zeile <code>CONCAT(liste, IF(liste = '', '', ', '), nachname)</code> an."],
+     solution: "DELIMITER //\nCREATE PROCEDURE kunden_liste(OUT liste TEXT)\nBEGIN\n  DECLARE fertig INT DEFAULT 0;\n  DECLARE v_name VARCHAR(50);\n  DECLARE cur CURSOR FOR SELECT nachname FROM kunden ORDER BY nachname;\n  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fertig = 1;\n  SET liste = '';\n  OPEN cur;\n  lesen: LOOP\n    FETCH cur INTO v_name;\n    IF fertig = 1 THEN LEAVE lesen; END IF;\n    SET liste = CONCAT(liste, IF(liste = '', '', ', '), v_name);\n  END LOOP;\n  CLOSE cur;\nEND //\nDELIMITER ;\n\nCALL kunden_liste(@l);\nSELECT @l;",
+     note: "Dasselbe liefert <code>SELECT GROUP_CONCAT(nachname ORDER BY nachname SEPARATOR ', ') FROM kunden;</code> in einer Zeile."},
+    {id: "k12-3", title: "Preise zeilenweise anpassen",
+     task: "<p>Schreibe eine Prozedur <code>preise_runden</code>, die mit einem Cursor über <code>produkte</code> läuft und jeden Preis auf volle 10 Cent aufrundet (<code>CEIL(preis * 10) / 10</code>). Der Cursor soll dazu <code>produkt_id</code> und <code>preis</code> lesen und pro Zeile ein <code>UPDATE</code> ausführen.</p>",
+     solution: "DELIMITER //\nCREATE PROCEDURE preise_runden()\nBEGIN\n  DECLARE fertig INT DEFAULT 0;\n  DECLARE v_id INT;\n  DECLARE v_preis DECIMAL(8,2);\n  DECLARE cur CURSOR FOR SELECT produkt_id, preis FROM produkte;\n  DECLARE CONTINUE HANDLER FOR NOT FOUND SET fertig = 1;\n  OPEN cur;\n  lesen: LOOP\n    FETCH cur INTO v_id, v_preis;\n    IF fertig = 1 THEN LEAVE lesen; END IF;\n    UPDATE produkte SET preis = CEIL(v_preis * 10) / 10 WHERE produkt_id = v_id;\n  END LOOP;\n  CLOSE cur;\nEND //\nDELIMITER ;\n\nCALL preise_runden();\nSELECT name, preis FROM produkte;",
+     note: "Einfacher geht es ohne Cursor: <code>UPDATE produkte SET preis = CEIL(preis * 10) / 10;</code>"}
+  ]
+};

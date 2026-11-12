@@ -12,10 +12,10 @@ window.CHAPTERS = [
   {id:8,  title:"Schlüsselfelder und Indizes",       status:"ready"  , sections:["Schlüssel","Schlüsselfelder festlegen","Indizes"]},
   {id:9,  title:"Funktionen in Abfragen",            status:"ready"  , sections:["Standardfunktionen","Nicht standardisierte Funktionen"]},
   {id:10, title:"Abfragen über mehrere Tabellen",    status:"ready"  , sections:["Verknüpfen","JOIN","UNION","Schnitt-/Differenzmengen","Unterabfragen"]},
-  {id:11, title:"Sichten (Views)",                   status:"planned", sections:["Erstellen","Löschen","Daten über Sichten ändern"]},
-  {id:12, title:"Cursor",                            status:"planned", sections:["Erstellen","Zugriff","Schließen"]},
-  {id:13, title:"Zugriffsrechte und Benutzer",       status:"planned", sections:["Benutzer (MariaDB)","GRANT","REVOKE"]},
-  {id:14, title:"Transaktionsverwaltung",            status:"planned", sections:["START TRANSACTION","COMMIT","ROLLBACK"]},
-  {id:15, title:"Stored Procedures",                 status:"planned", sections:["Erstellen","Bearbeiten","Beispielanwendung"]},
-  {id:16, title:"Trigger",                           status:"planned", sections:["Erstellen","Bearbeiten und löschen"]}
+  {id:11, title:"Sichten (Views)",                   status:"ready"  , sections:["Erstellen","Löschen","Daten über Sichten ändern"]},
+  {id:12, title:"Cursor",                            status:"ready"  , sections:["Erstellen","Zugriff","Schließen"]},
+  {id:13, title:"Zugriffsrechte und Benutzer",       status:"ready"  , sections:["Benutzer (MariaDB)","GRANT","REVOKE"]},
+  {id:14, title:"Transaktionsverwaltung",            status:"ready"  , sections:["START TRANSACTION","COMMIT","ROLLBACK"]},
+  {id:15, title:"Stored Procedures",                 status:"ready"  , sections:["Erstellen","Bearbeiten","Beispielanwendung"]},
+  {id:16, title:"Trigger",                           status:"ready"  , sections:["Erstellen","Bearbeiten und löschen"]}
 ];
