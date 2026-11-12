@@ -26,7 +26,10 @@
   function code(src) {
     return '<div class="codewrap"><button class="copy" type="button">Kopieren</button><pre><code>' + esc(src.trim()) + "</code></pre></div>";
   }
-  function exIds(ch) { var l = window.LESSONS[ch.id]; return l ? l.exercises.map(function (e) { return e.id; }) : []; }
+  function exIds(ch) {
+    var l = window.LESSONS[ch.id]; if (!l) return [];
+    return l.exercises.map(function (e) { return e.id; }).concat((l.quiz || []).map(function (q) { return q.id; }));
+  }
   function chapterProgress(ch) {
     var ids = exIds(ch); if (!ids.length) return {n: 0, d: 0};
     return {n: ids.length, d: ids.filter(function (i) { return done[i]; }).length};
@@ -88,8 +91,16 @@
       h += '<div class="card ex' + (done[e.id] ? " done" : "") + '" data-id="' + e.id + '"><h3>Aufgabe ' + (i + 1) + ": " + esc(e.title) +
         '<label><input type="checkbox"' + (done[e.id] ? " checked" : "") + "> erledigt</label></h3><div>" + e.task + "</div>" +
         (e.hints || []).map(function (t, k) { return "<details><summary>Hinweis " + (k + 1) + "</summary>" + t + "</details>"; }).join("") +
-        "<details><summary>Lösung anzeigen</summary>" + code(e.solution) + (e.note ? "<p>" + e.note + "</p>" : "") + "</details></div>";
+        "<details><summary>Lösung anzeigen</summary>" + (e.answer || "") + (e.solution ? code(e.solution) : "") + (e.note ? "<p>" + e.note + "</p>" : "") + "</details></div>";
     });
+    if (l.quiz && l.quiz.length) {
+      h += "<h2>Kurzquiz</h2>";
+      l.quiz.forEach(function (q, i) {
+        h += '<div class="card quiz' + (done[q.id] ? " done" : "") + '" data-id="' + q.id + '"><b>Frage ' + (i + 1) + ":</b> " + q.q + '<div class="opts">' +
+          q.options.map(function (o, k) { return '<button type="button" class="opt" data-k="' + k + '">' + o + "</button>"; }).join("") +
+          '</div><div class="fb" hidden></div></div>';
+      });
+    }
     main.innerHTML = h;
   }
 
@@ -119,6 +130,18 @@
         var s = getSelection(); s.removeAllRanges(); s.addRange(r); e.target.textContent = "Markiert";
       });
     }
+  });
+  main.addEventListener("click", function (e) {
+    var b = e.target.closest && e.target.closest(".opt"); if (!b) return;
+    var card = b.closest(".quiz"), id = card.dataset.id;
+    var l = window.LESSONS[parseInt((location.hash.match(/k\/(\d+)/) || [])[1], 10)];
+    var q = l.quiz.filter(function (x) { return x.id === id; })[0];
+    var k = parseInt(b.dataset.k, 10), ok = k === q.correct;
+    card.querySelectorAll(".opt").forEach(function (o) { o.classList.remove("right", "wrong"); });
+    b.classList.add(ok ? "right" : "wrong");
+    var fb = card.querySelector(".fb"); fb.hidden = false;
+    fb.innerHTML = (ok ? "<b>Richtig.</b> " : "<b>Leider falsch.</b> Versuch es nochmal. ") + (ok ? q.explain : "");
+    if (ok) { setDone(id, true); card.classList.add("done"); renderNav(parseInt((location.hash.match(/k\/(\d+)/) || [])[1], 10)); }
   });
   main.addEventListener("change", function (e) {
     if (e.target.type === "checkbox") {

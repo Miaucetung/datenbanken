@@ -61,6 +61,16 @@ table.t th{background:var(--accent-soft)}
 code{font-family:ui-monospace,Menlo,Consolas,monospace;background:var(--accent-soft);padding:1px 5px;border-radius:5px;font-size:.9em}
 pre code{background:none;padding:0}
 .search{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--text);font-size:1rem}
+.diagram{overflow:auto;margin:12px 0;color:var(--text)}
+.diagram svg{max-width:100%;height:auto}
+.diagram text{fill:currentColor;font:13px system-ui,sans-serif}
+.opts{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.opt{text-align:left;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font:inherit;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:var(--ok-soft);border-color:var(--ok)}
+.opt.wrong{background:var(--warn-soft);border-color:var(--warn)}
+.fb{margin-top:8px}
+.quiz.done{border-color:var(--ok)}
 @media (max-width:800px){
   #menuBtn{display:block}
   .nav{position:fixed;left:0;top:53px;bottom:0;height:auto;background:var(--panel);z-index:9;transform:translateX(-100%);transition:transform .2s;width:85%;max-width:320px}

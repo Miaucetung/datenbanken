@@ -9,9 +9,8 @@ Du übst im lokalen MariaDB, die Seite liefert Lektionen, Aufgaben, Lösungen un
 - Fortschritt (Häkchen bei Aufgaben) wird im Browser gespeichert.
 
 ## Stand
-Fertig: Kapitel 4 bis 16 (SQL-Grundlagen, Abfragen, Joins, Sichten, Cursor, Rechte, Transaktionen, Stored Procedures, Trigger) und Spickzettel.
-Alle Lösungen sind gegen MariaDB 10.11 getestet. Geplant: die Theoriekapitel 1 bis 3 (Grundlagen, Datenbankentwurf, relationales Modell).
-
+Fertig: alle 16 Kapitel (Theorie: Grundlagen, Datenbankentwurf, relationales Modell; Praxis: SQL von Datenbank bis Trigger) mit Übungen, Kurzquiz in den Theoriekapiteln und Spickzettel.
+Alle SQL-Lösungen sind gegen MariaDB 10.11 getestet. 
 ## Struktur
 - `data/chapters.js` Kapitelliste, `data/lessons-XX.js` eine Lektion je Kapitel, `data/cheatsheet.js`
 - `sql/` Setup-Skripte, `js/app.js` und `css/style.css` die Oberfläche
