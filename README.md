@@ -6,7 +6,17 @@ Du übst im lokalen MariaDB, die Seite liefert Lektionen, Aufgaben, Lösungen un
 ## Online (GitHub Pages)
 Nach dem Aktivieren erreichbar unter: https://miaucetung.github.io/datenbanken/
 
-## Betrieb auf eigenem Server (Cloudflare Tunnel)
+## Betrieb im k3s-Cluster (Cloudflare Tunnel)
+```bash
+kubectl kustomize deploy/ | head -40     # Vorschau, ändert nichts
+kubectl apply -k deploy/
+kubectl -n datenbanken get pods          # Pod muss 2/2 Running sein
+```
+Ein Init-Container klont das (öffentliche) Repo, ein Sidecar holt alle 5 Minuten Änderungen per `git pull`.
+Im Cloudflare Tunnel die Route `datenbanken.ajti.online` auf den Service `http://datenbanken.datenbanken.svc.cluster.local:80` setzen,
+dazu Cloudflare Access auf die eigene E-Mail-Adresse. Nach einer Änderung an `deploy/nginx.conf` erneut `kubectl apply -k deploy/` ausführen.
+
+## Betrieb mit Docker Compose (lokal oder einfacher Server)
 ```bash
 git clone https://github.com/Miaucetung/datenbanken.git && cd datenbanken
 docker compose up -d      # Nginx auf 127.0.0.1:8080, nur lesender Zugriff auf die Dateien

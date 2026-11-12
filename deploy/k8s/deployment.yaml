@@ -1,0 +1,104 @@
+# Nginx liefert die Dateien aus einem emptyDir. Beim Start klont ein Init-Container das öffentliche
+# GitHub-Repo, ein Sidecar holt danach alle 5 Minuten Änderungen (git pull). Eine eigene Image-Registry
+# ist nicht nötig. Dateien und Nginx-Konfiguration werden nur lesend eingebunden.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: datenbanken
+  labels:
+    app: datenbanken
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: datenbanken
+  template:
+    metadata:
+      labels:
+        app: datenbanken
+    spec:
+      automountServiceAccountToken: false
+      initContainers:
+        - name: git-clone
+          image: alpine:3.20
+          command:
+            - sh
+            - -c
+            - |
+              set -eu
+              apk add --no-cache git >/dev/null
+              git clone --depth 1 https://github.com/Miaucetung/datenbanken.git /site
+          volumeMounts:
+            - name: site
+              mountPath: /site
+          resources:
+            requests: {cpu: 10m, memory: 32Mi}
+            limits: {memory: 128Mi}
+      containers:
+        - name: nginx
+          image: nginx:1.27-alpine
+          ports:
+            - name: http
+              containerPort: 80
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            initialDelaySeconds: 10
+            periodSeconds: 30
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: site
+              mountPath: /usr/share/nginx/html
+              readOnly: true
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/default.conf
+              subPath: default.conf
+              readOnly: true
+            - name: cache
+              mountPath: /var/cache/nginx
+            - name: run
+              mountPath: /var/run
+            - name: tmp
+              mountPath: /tmp
+          resources:
+            requests: {cpu: 10m, memory: 16Mi}
+            limits: {memory: 128Mi}
+        - name: git-pull
+          image: alpine:3.20
+          command:
+            - sh
+            - -c
+            - |
+              apk add --no-cache git >/dev/null
+              while true; do
+                sleep 300
+                git -C /site pull --ff-only --quiet || echo "git pull fehlgeschlagen, neuer Versuch in 5 Minuten"
+              done
+          securityContext:
+            allowPrivilegeEscalation: false
+            seccompProfile:
+              type: RuntimeDefault
+          volumeMounts:
+            - name: site
+              mountPath: /site
+          resources:
+            requests: {cpu: 5m, memory: 16Mi}
+            limits: {memory: 128Mi}
+      volumes:
+        - name: site
+          emptyDir: {}
+        - name: nginx-conf
+          configMap:
+            name: datenbanken-nginx
+        - name: cache
+          emptyDir: {}
+        - name: run
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}

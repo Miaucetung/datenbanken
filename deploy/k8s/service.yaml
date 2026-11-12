@@ -1,0 +1,16 @@
+# Interne Adresse für den Cloudflare Tunnel:
+#   http://datenbanken.datenbanken.svc.cluster.local:80
+apiVersion: v1
+kind: Service
+metadata:
+  name: datenbanken
+  labels:
+    app: datenbanken
+spec:
+  type: ClusterIP
+  selector:
+    app: datenbanken
+  ports:
+    - name: http
+      port: 80
+      targetPort: http

@@ -1,0 +1,19 @@
+# Kubernetes-Manifeste (k3s) für die Lernplattform.
+#   kubectl apply -k deploy/
+# Die Nginx-Konfiguration kommt aus deploy/nginx.conf (dieselbe Datei wie bei Docker Compose).
+# Kustomize hängt einen Hash an den ConfigMap-Namen: ändert sich die Konfiguration, startet
+# das Deployment automatisch neu.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: datenbanken
+
+resources:
+  - k8s/namespace.yaml
+  - k8s/deployment.yaml
+  - k8s/service.yaml
+
+configMapGenerator:
+  - name: datenbanken-nginx
+    files:
+      - default.conf=nginx.conf
