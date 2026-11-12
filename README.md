@@ -6,6 +6,15 @@ Du übst im lokalen MariaDB, die Seite liefert Lektionen, Aufgaben, Lösungen un
 ## Online (GitHub Pages)
 Nach dem Aktivieren erreichbar unter: https://miaucetung.github.io/datenbanken/
 
+## Betrieb auf eigenem Server (Cloudflare Tunnel)
+```bash
+git clone https://github.com/Miaucetung/datenbanken.git && cd datenbanken
+docker compose up -d      # Nginx auf 127.0.0.1:8080, nur lesender Zugriff auf die Dateien
+```
+Im Cloudflare Tunnel eine *Published application* anlegen: Hostname `datenbanken.ajti.online`, Service `http://localhost:8080`.
+Zugriff mit Cloudflare Access auf die eigene E-Mail-Adresse beschränken. Aktualisieren mit `git pull`.
+`deploy/nginx.conf` liefert nur die Plattformdateien aus und setzt die Sicherheits-Header (entspricht `_headers`, die nur bei Cloudflare Pages gilt).
+
 ## Benutzen
 - `index.html` im Browser öffnen (Doppelklick genügt), oder über GitHub Pages.
 - Übungsdatenbank laden (ab Kapitel 6/7): `mariadb -u root -p < sql/lernshop.sql` (setzt alles zurück).

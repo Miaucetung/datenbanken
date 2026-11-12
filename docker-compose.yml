@@ -1,0 +1,31 @@
+# Startet die Lernplattform als statische Seite mit Nginx.
+#   docker compose up -d        starten
+#   docker compose down         stoppen
+#   git pull                    Inhalte aktualisieren (Container muss nicht neu starten)
+#
+# Der Port ist nur auf dem Server selbst erreichbar (127.0.0.1). Von außen kommt man über den
+# Cloudflare Tunnel hinein: Service-URL im Tunnel auf http://localhost:8080 setzen.
+# Dateien und Konfiguration werden nur lesend eingebunden.
+
+services:
+  datenbanken:
+    image: nginx:1.27-alpine
+    container_name: datenbanken
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    volumes:
+      - ./:/usr/share/nginx/html:ro
+      - ./deploy/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/healthz"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
